@@ -178,8 +178,6 @@ impl<'s> Iterator for AttrParamsParser<'s> {
 
         let value = &self.line[self.value_start..self.value_end];
 
-        println!("{}", std::str::from_utf8(value).unwrap());
-
         Some((key, AttributeValue::parse(value)))
     }
 }
