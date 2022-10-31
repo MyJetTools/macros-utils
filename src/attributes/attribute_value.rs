@@ -67,6 +67,10 @@ impl<'s> AttributeValue<'s> {
                 Ok(result) => Ok(result),
                 Err(_) => Err(format!("Can not parse value: {}", value)),
             },
+            AttributeValue::Str(value) => match FromStr::from_str(value) {
+                Ok(result) => Ok(result),
+                Err(_) => Err(format!("Can not parse value: {}", value)),
+            },
             _ => {
                 let result = format!(
                     "Invalid parameter type. Expected string - found type: {}",
