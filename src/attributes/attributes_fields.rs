@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use super::{AttrParamsParser, AttributeValue};
 
+#[derive(Debug, Clone)]
 pub struct AttributeFields {
     pub content: Option<Vec<u8>>,
 }
