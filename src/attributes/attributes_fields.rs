@@ -22,6 +22,10 @@ impl AttributeFields {
         None
     }
 
+    pub fn has_attr(&self, param_name: &str) -> bool {
+        self.get_param(param_name).is_some()
+    }
+
     pub fn get_bool(&self, param_name: &str) -> Option<bool> {
         let value = self.get_param(param_name)?;
 
