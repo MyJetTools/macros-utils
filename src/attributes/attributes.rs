@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use super::AttributeFields;
 
 pub struct Attributes {
-    data: HashMap<String, AttributeFields>,
+    pub data: HashMap<String, AttributeFields>,
 }
 
 impl Attributes {
