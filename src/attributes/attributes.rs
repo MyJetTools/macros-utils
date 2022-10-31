@@ -13,7 +13,7 @@ impl Attributes {
         }
     }
 
-    pub fn add(&mut self, key: String, content: Vec<u8>) {
+    pub fn add(&mut self, key: String, content: Option<Vec<u8>>) {
         self.data.insert(key, AttributeFields::new(content));
     }
 }

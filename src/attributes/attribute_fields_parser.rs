@@ -201,10 +201,10 @@ mod tests {
         let result = AttrParamsParser::new(src.as_bytes()).collect::<Vec<(&str, AttributeValue)>>();
 
         assert_eq!(result[0].0, "name");
-        assert_eq!(result[0].1.unwrap_as_string(), "operationsPerPage");
+        assert_eq!(result[0].1.as_string().unwrap(), "operationsPerPage");
 
         assert_eq!(result[1].0, "description");
-        assert_eq!(result[1].1.unwrap_as_string(), "Messages per page");
+        assert_eq!(result[1].1.as_string().unwrap(), "Messages per page");
 
         assert_eq!(result[2].0, "default");
         assert!(result[2].1.is_none());
@@ -217,10 +217,10 @@ mod tests {
         let result = AttrParamsParser::new(src.as_bytes()).collect::<Vec<(&str, AttributeValue)>>();
 
         assert_eq!(result[0].0, "name");
-        assert_eq!(result[0].1.unwrap_as_string(), "operationsPerPage");
+        assert_eq!(result[0].1.as_string().unwrap(), "operationsPerPage");
 
         assert_eq!(result[1].0, "description");
-        assert_eq!(result[1].1.unwrap_as_string(), "Messages per page");
+        assert_eq!(result[1].1.as_string().unwrap(), "Messages per page");
 
         assert_eq!(result[2].0, "default");
         assert!(result[2].1.is_none());
@@ -234,10 +234,10 @@ mod tests {
         let result = AttrParamsParser::new(src.as_bytes()).collect::<Vec<(&str, AttributeValue)>>();
 
         assert_eq!(result[0].0, "name");
-        assert_eq!(result[0].1.unwrap_as_string(), "operationsPerPage");
+        assert_eq!(result[0].1.as_string().unwrap(), "operationsPerPage");
 
         assert_eq!(result[1].0, "description");
-        assert_eq!(result[1].1.unwrap_as_string(), "Messages per page");
+        assert_eq!(result[1].1.as_string().unwrap(), "Messages per page");
 
         assert_eq!(result[2].0, "default");
         assert!(result[2].1.is_none());
@@ -253,15 +253,15 @@ mod tests {
         let result = AttrParamsParser::new(src.as_bytes()).collect::<Vec<(&str, AttributeValue)>>();
 
         assert_eq!(result[0].0, "name");
-        assert_eq!(result[0].1.unwrap_as_string(), "operationsPerPage");
+        assert_eq!(result[0].1.as_string().unwrap(), "operationsPerPage");
 
         assert_eq!(result[1].0, "amount");
-        assert_eq!(result[1].1.unwrap_as_type::<usize>(), 15);
+        assert_eq!(result[1].1.as_type::<usize>().unwrap(), 15);
 
         assert_eq!(result[2].0, "do_it");
-        assert!(result[2].1.unwrap_as_bool());
+        assert!(result[2].1.as_bool().unwrap());
 
         assert_eq!(result[3].0, "undo");
-        assert!(!result[3].1.unwrap_as_bool());
+        assert!(!result[3].1.as_bool().unwrap());
     }
 }

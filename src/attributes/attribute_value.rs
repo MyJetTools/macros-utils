@@ -33,38 +33,47 @@ impl<'s> AttributeValue<'s> {
         }
     }
 
-    pub fn unwrap_as_string(&self) -> &str {
+    pub fn as_string(&'s self) -> Result<&'s str, String> {
         match self {
-            AttributeValue::Str(value) => value,
+            AttributeValue::Str(value) => Ok(value),
             _ => {
-                panic!(
+                let result = format!(
                     "Invalid parameter type. Expected string - found type: {}",
                     self.type_as_str()
-                )
+                );
+
+                Err(result)
             }
         }
     }
 
-    pub fn unwrap_as_type<TFromStr: FromStr>(&self) -> usize {
+    pub fn as_type<TFromStr: FromStr>(&self) -> Result<TFromStr, String> {
         match self {
-            AttributeValue::Number(value) => FromStr::from_str(value).unwrap(),
+            AttributeValue::Number(value) => match FromStr::from_str(value) {
+                Ok(result) => Ok(result),
+                Err(_) => Err(format!("Can not parse value: {}", value)),
+            },
             _ => {
-                panic!(
+                let result = format!(
                     "Invalid parameter type. Expected string - found type: {}",
                     self.type_as_str()
-                )
+                );
+
+                Err(result)
             }
         }
     }
 
-    pub fn unwrap_as_bool(&self) -> bool {
+    pub fn as_bool(&self) -> Result<bool, String> {
         match self {
-            AttributeValue::Boolean(value) => *value,
+            AttributeValue::Boolean(value) => Ok(*value),
             _ => {
-                panic!(
+                let result = format!(
                     "Invalid parameter type. Expected bool - found type: {}",
                     self.type_as_str()
-                )
+                );
+
+                Err(result)
             }
         }
     }
