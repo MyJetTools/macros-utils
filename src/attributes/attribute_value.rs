@@ -47,6 +47,20 @@ impl<'s> AttributeValue<'s> {
         }
     }
 
+    pub fn receive_as_string(self) -> Result<&'s str, String> {
+        match self {
+            AttributeValue::Str(value) => Ok(value),
+            _ => {
+                let result = format!(
+                    "Invalid parameter type. Expected string - found type: {}",
+                    self.type_as_str()
+                );
+
+                Err(result)
+            }
+        }
+    }
+
     pub fn as_type<TFromStr: FromStr>(&self) -> Result<TFromStr, String> {
         match self {
             AttributeValue::Number(value) => match FromStr::from_str(value) {

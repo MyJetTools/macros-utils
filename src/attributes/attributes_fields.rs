@@ -42,12 +42,12 @@ impl AttributeFields {
         }
     }
 
-    pub fn get_as_string(&self, param_name: &str) -> Option<String> {
+    pub fn get_as_string<'s>(&'s self, param_name: &str) -> Option<&'s str> {
         let attr_value = self.get_param(param_name)?;
 
-        match attr_value.as_string() {
+        match attr_value.receive_as_string() {
             Ok(value) => {
-                return Some(value.to_string());
+                return Some(value);
             }
             Err(err) => panic!("Can not read parameter {}. Err: {}", param_name, err),
         }

@@ -27,4 +27,8 @@ impl Attributes {
             None => panic!("Attribute {} is not found", name),
         }
     }
+
+    pub fn has_attr(&self, name: &str) -> bool {
+        self.data.contains_key(name)
+    }
 }
