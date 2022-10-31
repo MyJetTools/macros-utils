@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use super::AttributeFields;
 
+#[derive(Debug, Clone)]
 pub struct Attributes {
     pub data: HashMap<String, AttributeFields>,
 }
