@@ -262,4 +262,23 @@ mod tests {
         assert_eq!(result[3].0, "undo");
         assert!(!result[3].1.as_bool().unwrap());
     }
+
+    #[test]
+    fn test_parse_with_negative_number() {
+        let src = r#"(name = "operationsPerPage" , amount = -15; do_it=true, undo=false)"#;
+
+        let result = AttrParamsParser::new(src.as_bytes()).collect::<Vec<(&str, AttributeValue)>>();
+
+        assert_eq!(result[0].0, "name");
+        assert_eq!(result[0].1.as_string().unwrap(), "operationsPerPage");
+
+        assert_eq!(result[1].0, "amount");
+        assert_eq!(result[1].1.as_type::<i64>().unwrap(), -15);
+
+        assert_eq!(result[2].0, "do_it");
+        assert!(result[2].1.as_bool().unwrap());
+
+        assert_eq!(result[3].0, "undo");
+        assert!(!result[3].1.as_bool().unwrap());
+    }
 }
