@@ -50,6 +50,10 @@ impl<'s> AttrParamsParser<'s> {
             if self.src[i] == b';' {
                 return i;
             }
+
+            if self.src[i] == b')' {
+                return i;
+            }
         }
 
         self.src.len()
@@ -151,6 +155,10 @@ impl<'s> AttrParamsParser<'s> {
                 return i - 1;
             }
 
+            if b == b')' {
+                return i - 1;
+            }
+
             i += 1;
         }
 
@@ -239,7 +247,7 @@ mod test {
 
     #[test]
     pub fn test_simple_structure() {
-        let params = r#"a: "1", b: "2""#;
+        let params = r#"(a: "1", b: "2")"#;
 
         let result =
             AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
@@ -287,7 +295,7 @@ mod test {
 
     #[test]
     pub fn test_number_and_bool() {
-        let params = r#"a:1, b=true"#;
+        let params = r#"(a:1, b=true)"#;
 
         let result =
             AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
@@ -303,7 +311,7 @@ mod test {
 
     #[test]
     pub fn test_simple_structure_with_bool() {
-        let params = r#"a: "1", b: true"#;
+        let params = r#"(a: "1", b: true)"#;
 
         let result =
             AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
@@ -319,7 +327,7 @@ mod test {
 
     #[test]
     pub fn test_simple_structure_with_default_at_the_end() {
-        let params = r#"a: "1", default"#;
+        let params = r#"(a: "1", default)"#;
 
         let result =
             AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
@@ -335,7 +343,7 @@ mod test {
 
     #[test]
     pub fn test_simple_structure_with_default_at_the_begining() {
-        let params = r#"default, a: "1","#;
+        let params = r#"(default, a: "1")"#;
 
         let result =
             AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();

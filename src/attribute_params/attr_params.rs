@@ -27,7 +27,6 @@ pub struct AttributeParams {
 
 impl AttributeParams {
     pub fn new(src: String) -> Self {
-        println!("Params: {}", src);
         let mut result = Self { src, params: None };
 
         if let Some(single_pos) = is_single_value(result.src.as_str()) {
@@ -97,6 +96,12 @@ impl AttributeParams {
 }
 
 fn is_single_value(src: &str) -> Option<Position> {
+    let mut src = src;
+
+    if src.starts_with("(") {
+        src = &src[1..src.len() - 1];
+    }
+
     if src.starts_with('"') {
         return Some(Position {
             from: 1,
