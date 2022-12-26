@@ -1,11 +1,11 @@
 use crate::Position;
 
-pub struct MacroParamsParser<'s> {
+pub struct AttrParamsParser<'s> {
     src: &'s [u8],
     pos: usize,
 }
 
-impl<'s> MacroParamsParser<'s> {
+impl<'s> AttrParamsParser<'s> {
     pub fn new(src: &'s [u8]) -> Self {
         Self { src, pos: 0 }
     }
@@ -152,7 +152,7 @@ impl<'s> MacroParamsParser<'s> {
     }
 }
 
-impl<'s> Iterator for MacroParamsParser<'s> {
+impl<'s> Iterator for AttrParamsParser<'s> {
     type Item = (Position, Position);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -209,14 +209,14 @@ fn check_if_value_start_complient_symbol(c: u8) {
 
 #[cfg(test)]
 mod test {
-    use crate::{MacroParamsParser, Position};
+    use crate::{AttrParamsParser, Position};
 
     #[test]
     pub fn test_simple_structure() {
         let params = r#"a: "1", b: "2""#;
 
         let result =
-            MacroParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
+            AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
 
         let (key, value) = result.get(0).unwrap();
         assert_eq!("a", key.get_str(params));
@@ -232,7 +232,7 @@ mod test {
         let params = r#"a: "1"; b: "2""#;
 
         let result =
-            MacroParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
+            AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
 
         let (key, value) = result.get(0).unwrap();
         assert_eq!("a", key.get_str(params));
@@ -248,7 +248,7 @@ mod test {
         let params = r#"a = "1", b="2""#;
 
         let result =
-            MacroParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
+            AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
 
         let (key, value) = result.get(0).unwrap();
         assert_eq!("a", key.get_str(params));
@@ -264,7 +264,7 @@ mod test {
         let params = r#"a:1, b=true"#;
 
         let result =
-            MacroParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
+            AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
 
         let (key, value) = result.get(0).unwrap();
         assert_eq!("a", key.get_str(params));
@@ -280,7 +280,7 @@ mod test {
         let params = r#"a: "1", b: true"#;
 
         let result =
-            MacroParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
+            AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
 
         let (key, value) = result.get(0).unwrap();
         assert_eq!("a", key.get_str(params));

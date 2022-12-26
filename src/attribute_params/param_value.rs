@@ -1,11 +1,11 @@
 use std::str::FromStr;
 
 #[derive(Clone, Debug)]
-pub struct MacrosParam<'s> {
+pub struct ParamValue<'s> {
     pub value: &'s [u8],
 }
 
-impl<'s> MacrosParam<'s> {
+impl<'s> ParamValue<'s> {
     pub fn get_value_as_str(&'s self) -> &'s str {
         if self.value[0] == b'"' {
             std::str::from_utf8(&self.value[1..self.value.len() - 1]).unwrap()

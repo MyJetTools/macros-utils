@@ -1,4 +1,4 @@
-use crate::{MacroParamsParser, MacrosParam};
+use crate::{AttrParamsParser, ParamValue};
 
 pub struct Position {
     pub from: usize,
@@ -16,12 +16,12 @@ pub enum ParamsType {
     Multiple(Vec<(Position, Position)>),
 }
 
-pub struct MacrosParams {
+pub struct AttributeParams {
     src: String,
     params: Option<ParamsType>,
 }
 
-impl MacrosParams {
+impl AttributeParams {
     pub fn new(src: String) -> Self {
         let mut result = Self { src, params: None };
 
@@ -29,25 +29,25 @@ impl MacrosParams {
             result.params = Some(ParamsType::Single(single_pos));
         } else {
             result.params = Some(ParamsType::Multiple(
-                MacroParamsParser::new(result.src.as_bytes()).collect(),
+                AttrParamsParser::new(result.src.as_bytes()).collect(),
             ));
         }
 
         result
     }
 
-    pub fn get_single_param<'s>(&'s self) -> Option<MacrosParam<'s>> {
+    pub fn get_single_param<'s>(&'s self) -> Option<ParamValue<'s>> {
         let result = self.params.as_ref()?;
 
         match result {
-            ParamsType::Single(value) => Some(MacrosParam {
+            ParamsType::Single(value) => Some(ParamValue {
                 value: self.src[value.from..value.to].as_bytes(),
             }),
             _ => None,
         }
     }
 
-    pub fn get_named_param<'s>(&'s self, param_name: &str) -> Option<MacrosParam<'s>> {
+    pub fn get_named_param<'s>(&'s self, param_name: &str) -> Option<ParamValue<'s>> {
         let result = self.params.as_ref()?;
 
         match result {
@@ -56,7 +56,7 @@ impl MacrosParams {
                     let key = key.get_str(&self.src);
 
                     if key == param_name {
-                        return Some(MacrosParam {
+                        return Some(ParamValue {
                             value: value.get_str(&self.src).as_bytes(),
                         });
                     }
@@ -68,7 +68,7 @@ impl MacrosParams {
         }
     }
 
-    pub fn get_from_single_or_named<'s>(&'s self, param_name: &str) -> Option<MacrosParam<'s>> {
+    pub fn get_from_single_or_named<'s>(&'s self, param_name: &str) -> Option<ParamValue<'s>> {
         if let Some(result) = self.get_single_param() {
             return Some(result);
         }
@@ -95,7 +95,7 @@ mod tests {
     fn test_simple_params() {
         let params = r#"a: "1", b: "2""#;
 
-        let result = super::MacrosParams::new(params.to_string());
+        let result = super::AttributeParams::new(params.to_string());
 
         assert_eq!("1", result.get_named_param("a").unwrap().get_value_as_str());
         assert_eq!("2", result.get_named_param("b").unwrap().get_value_as_str());
@@ -113,7 +113,7 @@ mod tests {
     fn test_params_with_number_and_bool() {
         let params = r#"a: 1, b: true"#;
 
-        let result = super::MacrosParams::new(params.to_string());
+        let result = super::AttributeParams::new(params.to_string());
 
         assert_eq!(1, result.get_named_param("a").unwrap().get_value());
         assert_eq!(true, result.get_named_param("b").unwrap().get_value());

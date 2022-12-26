@@ -1,3 +1,2 @@
-pub mod attributes;
-mod macro_params_parser;
-pub use macro_params_parser::*;
+mod attribute_params;
+pub use attribute_params::*;
