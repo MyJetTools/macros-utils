@@ -96,16 +96,10 @@ impl AttributeParams {
 }
 
 fn is_single_value(src: &str) -> Option<Position> {
-    let mut src = src;
-
-    if src.starts_with("(") {
-        src = &src[1..src.len() - 1];
-    }
-
-    if src.starts_with('"') {
+    if src.as_bytes()[1] == b'"' {
         return Some(Position {
-            from: 1,
-            to: src.len() - 1,
+            from: 2,
+            to: src.len() - 2,
         });
     }
 
@@ -117,7 +111,7 @@ mod tests {
 
     #[test]
     fn test_simple_params() {
-        let params = r#"a: "1", b: "2""#;
+        let params = r#"(a: "1", b: "2")"#;
 
         let result = super::AttributeParams::new(params.to_string());
 
@@ -135,11 +129,20 @@ mod tests {
 
     #[test]
     fn test_params_with_number_and_bool() {
-        let params = r#"a: 1, b: true"#;
+        let params = r#"(a: 1, b: true)"#;
 
         let result = super::AttributeParams::new(params.to_string());
 
         assert_eq!(1, result.get_named_param("a").unwrap().get_value());
         assert_eq!(true, result.get_named_param("b").unwrap().get_value());
+    }
+
+    #[test]
+    fn test_single_param() {
+        let params = r#"(">")"#;
+
+        let result = super::AttributeParams::new(params.to_string());
+
+        assert_eq!(">", result.get_single_param().unwrap().get_value_as_str());
     }
 }
