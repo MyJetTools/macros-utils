@@ -7,6 +7,10 @@ pub struct Position {
 
 impl Position {
     pub fn get_str<'s>(&self, src: &'s str) -> &'s str {
+        if self.to == 0 {
+            return "";
+        }
+
         &src[self.from..self.to]
     }
 }
@@ -68,6 +72,20 @@ impl AttributeParams {
         }
     }
 
+    pub fn has_param(&self, param_name: &str) -> bool {
+        match self.params.as_ref().unwrap() {
+            ParamsType::Multiple(params) => {
+                for (key, _) in params {
+                    if key.get_str(&self.src) == param_name {
+                        return true;
+                    }
+                }
+
+                false
+            }
+            ParamsType::Single(_) => false,
+        }
+    }
     pub fn get_from_single_or_named<'s>(&'s self, param_name: &str) -> Option<ParamValue<'s>> {
         if let Some(result) = self.get_single_param() {
             return Some(result);

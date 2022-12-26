@@ -42,11 +42,17 @@ impl<'s> AttrParamsParser<'s> {
             if self.src[i] == b'=' {
                 return i;
             }
+
+            if self.src[i] == b',' {
+                return i;
+            }
+
+            if self.src[i] == b';' {
+                return i;
+            }
         }
-        panic!(
-            "Can not find the end of param name. Line: {}",
-            std::str::from_utf8(&self.src[self.pos..]).unwrap()
-        );
+
+        self.src.len()
     }
 
     fn find_param_name_separator(&mut self) -> usize {
@@ -165,6 +171,26 @@ impl<'s> Iterator for AttrParamsParser<'s> {
         let param_name_end_pos = self.find_the_end_of_param_name();
 
         self.pos = param_name_end_pos + 1;
+
+        if self.pos >= self.src.len() {
+            return Some((
+                Position {
+                    from: param_name_start_pos,
+                    to: param_name_end_pos,
+                },
+                Position { from: 0, to: 0 },
+            ));
+        }
+
+        if self.src[param_name_end_pos] == b';' || self.src[param_name_end_pos] == b',' {
+            return Some((
+                Position {
+                    from: param_name_start_pos,
+                    to: param_name_end_pos,
+                },
+                Position { from: 0, to: 0 },
+            ));
+        }
 
         if self.src[param_name_end_pos] <= 32 {
             let param_name_separator = self.find_param_name_separator();
@@ -289,5 +315,37 @@ mod test {
         let (key, value) = result.get(1).unwrap();
         assert_eq!("b", key.get_str(params));
         assert_eq!("true", value.get_str(params));
+    }
+
+    #[test]
+    pub fn test_simple_structure_with_default_at_the_end() {
+        let params = r#"a: "1", default"#;
+
+        let result =
+            AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
+
+        let (key, value) = result.get(0).unwrap();
+        assert_eq!("a", key.get_str(params));
+        assert_eq!("\"1\"", value.get_str(params));
+
+        let (key, value) = result.get(1).unwrap();
+        assert_eq!("default", key.get_str(params));
+        assert_eq!("", value.get_str(params));
+    }
+
+    #[test]
+    pub fn test_simple_structure_with_default_at_the_begining() {
+        let params = r#"default, a: "1","#;
+
+        let result =
+            AttrParamsParser::new(params.as_bytes()).collect::<Vec<(Position, Position)>>();
+
+        let (key, value) = result.get(0).unwrap();
+        assert_eq!("default", key.get_str(params));
+        assert_eq!("", value.get_str(params));
+
+        let (key, value) = result.get(1).unwrap();
+        assert_eq!("a", key.get_str(params));
+        assert_eq!("\"1\"", value.get_str(params));
     }
 }
