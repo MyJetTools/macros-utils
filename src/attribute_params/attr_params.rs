@@ -27,6 +27,8 @@ pub struct AttributeParams {
 
 impl AttributeParams {
     pub fn new(src: String) -> Self {
+        println!("src: {}", src);
+
         let mut result = Self { src, params: None };
 
         if let Some(single_pos) = is_single_value(result.src.as_str()) {
